@@ -1,11 +1,7 @@
 package Model;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -14,9 +10,7 @@ public class Field {
      final int SPACE=1;
      private int[][] matrixField;
 
-     public Field (int width,int height,String input) throws FileNotFoundException{
-          int greater=width;
-          if(height>greater) greater=height;
+     public Field (String input) throws FileNotFoundException{
           int [] sizeXY=getSize(input);
           matrixField=new int[sizeXY[0]][sizeXY[1]];
 
@@ -54,7 +48,10 @@ public class Field {
                     matrixField[x][y]=SPACE;
                }
      }
-     public int getGreaterSize (){
-          return matrixField.length > matrixField[0].length ? matrixField.length : matrixField[0].length;
+     public int getRowsNumber (){
+          return matrixField[0].length ;
+     }
+     public int getColumnsNumber (){
+          return matrixField.length ;
      }
 }
