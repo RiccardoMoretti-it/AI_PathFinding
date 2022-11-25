@@ -7,6 +7,9 @@ import processing.core.PVector;
 
 public class Inizia extends PApplet {
 
+	public static int LEFT_ClICK = 37;
+	public static int RIGHT_ClICK = 39;
+
 	int currentResolutionX;
 	int currentResolutionY;
 
@@ -42,17 +45,19 @@ public class Inizia extends PApplet {
 		}
 
 		drawField(field);
-		drawBot();
+		if(bot!=null){
+			if(frameCount%4==0)
+			bot.advance();
+			drawBot();
+		}
 	}		
 
 	private void drawBot() {
-		if(bot!=null){
 			double startX=field.getDrawingPosition()[0]+bot.getPosition()[0];
 			double startY=field.getDrawingPosition()[1]+bot.getPosition()[1];
 			fill(200,40,40);
 			ellipse((float)startX,(float)startY,(float)field.getSquareSize(),(float)field.getSquareSize());
 	
-		}
 	}
 	private boolean wasResized() {
 		if(width!=currentResolutionX || height!=currentResolutionY){
@@ -122,8 +127,17 @@ public class Inizia extends PApplet {
 		return new double[]{x,y};
 	}
 	public void mouseClicked() {
-		double[]coords=normalizeMouse();
-		bot=new Robot(coords[0],coords[1], field);
+		if(mouseButton==LEFT_ClICK){
+			double[]coords=normalizeMouse();
+			bot=new Robot(coords[0],coords[1], field);
+		}
+		if(mouseButton==RIGHT_ClICK){
+			if(bot!=null){
+				int cellX=(int)(mouseX/field.getSquareSize());
+				int cellY=(int)(mouseY/field.getSquareSize());
+				bot.setDestination(cellX, cellY);
+			}
+		}
 	}
 	public static void main(String[] passedArgs) {
 

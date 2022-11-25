@@ -1,6 +1,7 @@
 package Model;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 
 public class FieldContainer {
@@ -55,5 +56,8 @@ public class FieldContainer {
      }
      public void randomize(){
           actualField.randomize();
+     }
+     public ArrayList<Integer> getDirections(int fromX,int fromY,int toX, int toY){
+          return actualField.getDirections(fromX,fromY,toX, toY);
      }
 }
