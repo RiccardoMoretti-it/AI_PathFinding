@@ -3,14 +3,15 @@ package Model;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-
+//la graficazione di Field
 public class FieldContainer {
 
-     double squareSize;
+     float squareSize;
+     float oldSquareSize;
      Field actualField;
-     double drawingPositionX;
-     double drawingPositionY;
-     boolean drawMiddleLeft;
+     float drawingPositionX;
+     float drawingPositionY;
+     boolean anchorMiddleLeft;
 
      public FieldContainer(String input,int width, int height) throws FileNotFoundException{
           actualField=new Field(input);
@@ -18,29 +19,38 @@ public class FieldContainer {
      }
 
      public void setSizes(int width, int height){
-
-          double ratioHeight = height*1.0/actualField.getRowsNumber(); 
-          double ratioWidth  = width*1.0/actualField.getColumnsNumber(); 
-
+          oldSquareSize=squareSize;
+          float ratioHeight = (float)(height*1.0/actualField.getRowsNumber()); 
+          float ratioWidth  = (float)(width*1.0/actualField.getColumnsNumber()); 
           squareSize= ratioHeight<ratioWidth ? ratioHeight : ratioWidth;
-          drawMiddleLeft=ratioHeight<ratioWidth ? false : true;
+          anchorMiddleLeft=ratioHeight<ratioWidth ? false : true;
 
           drawingPositionX=0;
           drawingPositionY=0;
-          if(drawMiddleLeft)
+          if(anchorMiddleLeft)
                drawingPositionY=(height/2 - squareSize*actualField.getRowsNumber()/2);
           else
                drawingPositionX=(width/2 - squareSize*actualField.getColumnsNumber()/2);
      }
      
-     public double[] getDrawingPosition(){
-          return new double []{drawingPositionX,drawingPositionY};
+     public void randomize(){
+          actualField.randomize();
      }
-     public boolean drawMiddleLeft (){
-          return drawMiddleLeft;
+
+     public ArrayList<Integer> getDirections(int fromX,int fromY,int toX, int toY){
+          return actualField.getDirections(fromX,fromY,toX, toY);
      }
-     public double getSquareSize (){
+     public float[] getDrawingPosition(){
+          return new float []{drawingPositionX,drawingPositionY};
+     }
+     public boolean isAnchoredMiddleLeft (){
+          return anchorMiddleLeft;
+     }
+     public float getSquareSize (){
           return squareSize;
+     }
+     public float getOldSquareSize (){
+          return oldSquareSize;
      }
      public int getFieldLength(){
           return (int)(actualField.getColumnsNumber()*squareSize);
@@ -48,16 +58,10 @@ public class FieldContainer {
      public int getFieldHeight(){
           return (int)(actualField.getRowsNumber()*squareSize);
      }
-     public int[] getFieldCells(){
+     public int[] getCellsNumber(){
           return new int[]{actualField.getColumnsNumber(),actualField.getRowsNumber()};
      }
-     public int getStatusAtPos(int x,int y){
-          return actualField.getMatrixField()[x][y];
-     }
-     public void randomize(){
-          actualField.randomize();
-     }
-     public ArrayList<Integer> getDirections(int fromX,int fromY,int toX, int toY){
-          return actualField.getDirections(fromX,fromY,toX, toY);
+     public int getValueAtPos(int x,int y){
+          return actualField.getValueAtPos(x,y);
      }
 }

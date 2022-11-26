@@ -40,21 +40,35 @@ public class Inizia extends PApplet {
 	public void draw(){
 		if(!setup)setup();
 		if(wasResized()){
+			updateResolution();
 			field.setSizes(width, height);
-			//bot.updatePosition(mouseX, mouseY);
+			adjustRobotPosition();
 		}
-
 		drawField(field);
+
 		if(bot!=null){
 			if(frameCount%4==0)
 			bot.advance();
-			drawBot();
+			drawBot();		print("\n"+bot.getPosition()[0],bot.getPosition()[1]);
+
 		}
 	}		
 
+	private void adjustRobotPosition() {
+		float ratio=field.getSquareSize()/field.getOldSquareSize();
+		float[] coords=bot.getPosition();
+		coords[0]*=ratio;
+		coords[1]*=ratio;
+
+		bot.setNewPosition(coords);
+	}
+	private void updateResolution() {
+		currentResolutionX=width;
+		currentResolutionY=height;
+	}
 	private void drawBot() {
-			double startX=field.getDrawingPosition()[0]+bot.getPosition()[0];
-			double startY=field.getDrawingPosition()[1]+bot.getPosition()[1];
+			float startX=field.getDrawingPosition()[0]+bot.getPosition()[0];
+			float startY=field.getDrawingPosition()[1]+bot.getPosition()[1];
 			fill(200,40,40);
 			ellipse((float)startX,(float)startY,(float)field.getSquareSize(),(float)field.getSquareSize());
 	
@@ -83,12 +97,12 @@ public class Inizia extends PApplet {
 
 		float offsetX;
 		float offsetY;
-		for(int x=0;x<field.getFieldCells()[0];x++)
-			for(int y=0;y<field.getFieldCells()[1];y++)
+		for(int x=0;x<field.getCellsNumber()[0];x++)
+			for(int y=0;y<field.getCellsNumber()[1];y++)
 				{
 					offsetX=(float)field.getSquareSize()*x;
 					offsetY=(float)field.getSquareSize()*y;
-					if(field.getStatusAtPos(x, y)==Field.WALL){
+					if(field.getValueAtPos(x, y)==Field.WALL){
 	
 						rect(startingPosition.x+offsetX+1,
 							startingPosition.y+offsetY+1, 
@@ -98,17 +112,18 @@ public class Inizia extends PApplet {
 				}
 	}
 	void drawBackground(PVector startingPosition,FieldContainer fd){
+		fill(255,255,255,2);
 		rect(startingPosition.x,startingPosition.y,fd.getFieldLength(), fd.getFieldHeight());
 		drawBoundaries(startingPosition);
 	}
 
 	private void drawBoundaries(PVector startingPosition){
-		fill(255);
+		fill(255,255,255,2);
 		stroke(0);
 		float offsetX;
 		float offsetY;
-		for(int x=0;x<field.getFieldCells()[0];x++)
-			for(int y=0;y<field.getFieldCells()[1];y++)
+		for(int x=0;x<field.getCellsNumber()[0];x++)
+			for(int y=0;y<field.getCellsNumber()[1];y++)
 				{
 					offsetX=(float)field.getSquareSize()*x;
 					offsetY=(float)field.getSquareSize()*y;
@@ -120,22 +135,21 @@ public class Inizia extends PApplet {
 							
 				}
 	}
-	private double[] normalizeMouse(){
-		double x=mouseX- field.getDrawingPosition()[0];
-		double y=mouseY- field.getDrawingPosition()[1];
+	private float[] normalizeMouse(){
+		float x=mouseX- field.getDrawingPosition()[0];
+		float y=mouseY- field.getDrawingPosition()[1];
 
-		return new double[]{x,y};
+		return new float[]{x,y};
 	}
 	public void mouseClicked() {
 		if(mouseButton==LEFT_ClICK){
-			double[]coords=normalizeMouse();
+			float[]coords=normalizeMouse();
 			bot=new Robot(coords[0],coords[1], field);
 		}
 		if(mouseButton==RIGHT_ClICK){
 			if(bot!=null){
-				int cellX=(int)(mouseX/field.getSquareSize());
-				int cellY=(int)(mouseY/field.getSquareSize());
-				bot.setDestination(cellX, cellY);
+				float[]coords=normalizeMouse();
+				bot.setDestination(new int[]{(int)(coords[0]/field.getSquareSize()), (int)(coords[1]/field.getSquareSize())});
 			}
 		}
 	}

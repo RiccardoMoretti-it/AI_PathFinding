@@ -10,7 +10,7 @@ public class Robot{
      public static final int UP = -3;
      public static final int DONW = -4;
 
-     double[] position;
+     float[] position;
      int[] cellDestination;
      ArrayList<Integer> directions;
      int currentDirection;
@@ -18,36 +18,36 @@ public class Robot{
      FieldContainer field;
      Random rnd;
      
-     public Robot(Double mouseX,Double mouseY,FieldContainer field){
+     public Robot(float mouseX,float mouseY,FieldContainer field){
           this.field=field;
           cellDestination=null;
           rnd=new Random();
           updatePosition(mouseX,mouseY);
      }
-     public void updatePosition(Double mouseX,Double mouseY){
-          double squareSize=field.getSquareSize();
+     public void updatePosition(float mouseX,float mouseY){
+          float squareSize=field.getSquareSize();
           int cellX=(int)(mouseX/squareSize);
           int cellY=(int)(mouseY/squareSize);
           int[]coords=new int[]{cellX,cellY};
 
           coords=getValidCoords(new int[]{cellX,cellY});
-          position=new double[]{coords[0]*squareSize+squareSize*0.5,coords[1]*squareSize+squareSize*0.5};
+          position=new float[]{(float)(coords[0]*squareSize+squareSize*0.5),(float)(coords[1]*squareSize+squareSize*0.5)};
      }
 
      private int[] getValidCoords(int[]coords){
           int addX=0,addY=0;
-          if(field.getStatusAtPos(coords[0], coords[1])==Field.WALL){
+          if(field.getValueAtPos(coords[0], coords[1])==Field.WALL){
                do{
                     addX=rnd.nextInt(3)-1;
                     addY=rnd.nextInt(3)-1;
-               }while(coords[0]+addX>field.getFieldCells()[0]-1 || coords[0]+addX<0 ||coords[1]+addY>field.getFieldCells()[0]-1 || coords[1]+addY<0);
+               }while(coords[0]+addX>field.getCellsNumber()[0]-1 || coords[0]+addX<0 ||coords[1]+addY>field.getCellsNumber()[0]-1 || coords[1]+addY<0);
                coords[0]+=addX;
                coords[1]+=addY;
                coords=getValidCoords(coords);
           }
           return coords;
      }
-     public double[] getPosition(){
+     public float[] getPosition(){
           return position;
      }
      public void advance(){
@@ -84,9 +84,13 @@ public class Robot{
      private void calculateDirections() {
           directions=field.getDirections((int)(position[0]/field.squareSize), (int)(position[1]/field.squareSize), cellDestination[0], cellDestination[1]);
      }
-     public void setDestination(int cellX,int cellY){
+     public void setDestination(int[]coords){
+          coords= getValidCoords(coords);
           resetDestination();
-          cellDestination=new int[]{cellX,cellY};
+          cellDestination=new int[]{coords[0],coords[1]};
+     }
+     public void setNewPosition(float []coords){
+          position=coords;
      }
      private void resetDestination() {
           directions=null;
