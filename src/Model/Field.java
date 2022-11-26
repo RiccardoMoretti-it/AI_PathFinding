@@ -28,27 +28,53 @@ public class Field {
      //BFS da "from" a "to"
      public ArrayList<Integer> getDirections(final int fromX,final int fromY,final int toX, final int toY){
           int[][] matrixCloned=cloneMatrix();
-          int value=1;
           ArrayList<Integer[]> queue=new ArrayList<>();
 
+          initializeQueueAndMatrix(queue,matrixCloned,fromX,fromY);
+          Integer[] closest=getClosest(queue,matrixCloned,toX,toY);
+
+          return extractPath(matrixCloned,closest[0],closest[1]);
+     }
+     private void initializeQueueAndMatrix(ArrayList<Integer[]>queue, int[][]matrix,int fromX,int fromY){
           queue.add(new Integer[]{fromX,fromY});
-          matrixCloned[fromX][fromY]=0;
-
-          int x,y;
-          while(queue.get(0)[0]!=toX || queue.get(0)[1]!=toY){
-               value=matrixCloned[queue.get(0)[0]][queue.get(0)[1]];
-               for(x=queue.get(0)[0]-1;x<=queue.get(0)[0]+1;x++)
-                    for(y=queue.get(0)[1]-1;y<=queue.get(0)[1]+1;y++)
-
-                    if((x==queue.get(0)[0] || y == queue.get(0)[1]) && utilities.between(x, 0, matrixCloned.length-1)&& utilities.between(y, 0, matrixCloned[0].length-1) ){
-                         if(matrixCloned[x][y] == Field.SPACE){
-                              queue.add(new Integer[]{x,y});
-                              matrixCloned[x][y]=value+1;
-                         }
-                    }
-               queue.remove(0);
+          matrix[fromX][fromY]=0;
+     }
+     private Integer[] getClosest(ArrayList<Integer[]> queue,int[][]matrix, int toX,int toY){
+          Integer[] closest=queue.get(0);
+          while(!isAtDestination(queue.get(0), toX, toY)){
+               closest=checkNeighbours(matrix,queue,toX,toY,closest);
+               if(queue.size()>1){
+                    queue.remove(0);
+               }
+               else{
+                    return closest;
+               }
           }
-          return extractPath(matrixCloned,toX,toY);
+          return queue.get(0);
+     }
+
+     //per qualche ragione closest non viene passato come reference
+     Integer[] checkNeighbours(int[][]matrix,ArrayList<Integer[]> queue,int toX,int toY,Integer[]closest){
+          int currentX,currentY;
+          int value=matrix[queue.get(0)[0]][queue.get(0)[1]];
+          currentX=queue.get(0)[0];
+          currentY=queue.get(0)[1];
+          
+          for(int x=currentX-1;x<=currentX+1;x++)
+          for(int y=currentY-1;y<=currentY+1;y++)
+               if((x==currentX || y == currentY) && utilities.between(x, 0, matrix.length-1)&& utilities.between(y, 0, matrix[0].length-1) ){
+                    if(matrix[x][y] == Field.SPACE){
+                         queue.add(new Integer[]{x,y});
+                         if(distance(toX, toY, x, y)<distance(toX, toY,closest[0], closest[1])){
+                              closest=new Integer[]{x,y};
+                         }
+                         matrix[x][y]=value+1;
+                    }
+               }
+          return closest;
+     }
+     private boolean isAtDestination(Integer[]coord,int toX,int toY){
+          return (coord[0]==toX && coord[1]==toY);
      }
      private ArrayList<Integer> extractPath(int[][] matrixCloned, int x,int y) {
           ArrayList<Integer> direction= new ArrayList<>();
@@ -109,6 +135,9 @@ public class Field {
           coords[0]=sc.nextInt();
           coords[1]=sc.nextInt();
      return coords;
+}
+private double distance(int x1,int y1,int x2,int y2){
+     return Math.abs(Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2)));
 }
      private int getWallChanceFromFile(Scanner sc) {
           return sc.nextInt();
