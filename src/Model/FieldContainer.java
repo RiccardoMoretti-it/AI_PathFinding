@@ -64,4 +64,7 @@ public class FieldContainer {
      public int getValueAtPos(int x,int y){
           return actualField.getValueAtPos(x,y);
      }
+     public int[][] cloneMatrix(){
+          return actualField.cloneMatrix();
+     }
 }
