@@ -13,7 +13,7 @@ public class DrawablePowerup extends Powerup {
      @Override
      public void draw() {
           // TODO Auto-generated method stub
-          
+     
      }
      
 }
