@@ -81,18 +81,18 @@ public class Field {
           while(matrixCloned[x][y]!=0){
                if(utilities.between(x+1, 0, matrixCloned.length-1) && matrixCloned[x+1][y]+1==matrixCloned[x][y]){
                     x++;
-                    direction.add(0,Robot.LEFT);
+                    direction.add(0,Environment.LEFT);
                }
                else if(utilities.between(x-1, 0, matrixCloned.length-1) && matrixCloned[x-1][y]+1==matrixCloned[x][y]){
-                    direction.add(0,Robot.RIGHT);
+                    direction.add(0,Environment.RIGHT);
                     x--;
                }
                else if(utilities.between(y+1, 0, matrixCloned[0].length-1) && matrixCloned[x][y+1]+1==matrixCloned[x][y]){
-                    direction.add(0,Robot.UP);
+                    direction.add(0,Environment.UP);
                     y++;
                }
                else if(utilities.between(y-1, 0, matrixCloned[0].length-1) && matrixCloned[x][y-1]+1==matrixCloned[x][y]){
-                    direction.add(0,Robot.DONW);
+                    direction.add(0,Environment.DONW);
                     y--;
                }
           }

@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import Entities.Characters.DrawableRobot;
 import Model.*;
+import Model.Entities.Characters.Robot;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -15,7 +17,7 @@ public class Inizia extends PApplet {
 
 	boolean setup=false;
 	String PATH;
-	FieldContainer field;
+	Environment environment;
 	Robot bot;
 
 	public void settings(){
@@ -29,33 +31,37 @@ public class Inizia extends PApplet {
 		currentResolutionY=height;
 
 		background(120);
+
+		
+		FieldContainer field=null;
 		try {
 			field = new FieldContainer(PATH,width,height);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		field.randomize();
+		environment=new Environment(field);
 	}
 
 	public void draw(){
 		if(!setup)setup();
 		if(wasResized()){
 			updateResolution();
-			field.setSizes(width, height);
+			environment.field.setSizes(width, height);
 			adjustRobotPosition();
 		}
-		drawField(field);
+		drawField(environment.field);
 
 		if(bot!=null){
 			if(frameCount%4==0)
 			bot.advance();
-			drawBot();		print("\n"+bot.getPosition()[0],bot.getPosition()[1]);
-
+			drawBot();		
+			print("\n"+bot.getPosition()[0],bot.getPosition()[1]);
 		}
 	}		
 
 	private void adjustRobotPosition() {
-		float ratio=field.getSquareSize()/field.getOldSquareSize();
+		float ratio=environment.field.getSquareSize()/environment.field.getOldSquareSize();
 		float[] coords=bot.getPosition();
 		coords[0]*=ratio;
 		coords[1]*=ratio;
@@ -67,10 +73,10 @@ public class Inizia extends PApplet {
 		currentResolutionY=height;
 	}
 	private void drawBot() {
-			float startX=field.getDrawingPosition()[0]+bot.getPosition()[0];
-			float startY=field.getDrawingPosition()[1]+bot.getPosition()[1];
+			float startX=environment.field.getDrawingPosition()[0]+bot.getPosition()[0];
+			float startY=environment.field.getDrawingPosition()[1]+bot.getPosition()[1];
 			fill(200,40,40);
-			ellipse((float)startX,(float)startY,(float)field.getSquareSize(),(float)field.getSquareSize());
+			ellipse((float)startX,(float)startY,(float)environment.field.getSquareSize(),(float)environment.field.getSquareSize());
 	
 	}
 	private boolean wasResized() {
@@ -85,7 +91,7 @@ public class Inizia extends PApplet {
 				
 		PVector startingPosition=new PVector((float)fd.getDrawingPosition()[0],(float)fd.getDrawingPosition()[1]);
 
-		drawBackground(startingPosition,field);
+		drawBackground(startingPosition,environment.field);
 		drawBoundaries(startingPosition);
 		drawWalls(startingPosition);
 	}
@@ -97,17 +103,17 @@ public class Inizia extends PApplet {
 
 		float offsetX;
 		float offsetY;
-		for(int x=0;x<field.getCellsNumber()[0];x++)
-			for(int y=0;y<field.getCellsNumber()[1];y++)
+		for(int x=0;x<environment.field.getCellsNumber()[0];x++)
+			for(int y=0;y<environment.field.getCellsNumber()[1];y++)
 				{
-					offsetX=(float)field.getSquareSize()*x;
-					offsetY=(float)field.getSquareSize()*y;
-					if(field.getValueAtPos(x, y)==Field.WALL){
+					offsetX=(float)environment.field.getSquareSize()*x;
+					offsetY=(float)environment.field.getSquareSize()*y;
+					if(environment.field.getValueAtPos(x, y)==Field.WALL){
 	
 						rect(startingPosition.x+offsetX+1,
 							startingPosition.y+offsetY+1, 
-							(float)field.getSquareSize()-1, 
-							(float)field.getSquareSize()-1);
+							(float)environment.field.getSquareSize()-1, 
+							(float)environment.field.getSquareSize()-1);
 					}
 				}
 	}
@@ -122,34 +128,34 @@ public class Inizia extends PApplet {
 		stroke(0);
 		float offsetX;
 		float offsetY;
-		for(int x=0;x<field.getCellsNumber()[0];x++)
-			for(int y=0;y<field.getCellsNumber()[1];y++)
+		for(int x=0;x<environment.field.getCellsNumber()[0];x++)
+			for(int y=0;y<environment.field.getCellsNumber()[1];y++)
 				{
-					offsetX=(float)field.getSquareSize()*x;
-					offsetY=(float)field.getSquareSize()*y;
+					offsetX=(float)environment.field.getSquareSize()*x;
+					offsetY=(float)environment.field.getSquareSize()*y;
 					
 					rect(startingPosition.x+offsetX+1,
 						startingPosition.y+offsetY+1, 
-						(float)field.getSquareSize()-1, 
-						(float)field.getSquareSize()-1);
+						(float)environment.field.getSquareSize()-1, 
+						(float)environment.field.getSquareSize()-1);
 							
 				}
 	}
 	private float[] normalizeMouse(){
-		float x=mouseX- field.getDrawingPosition()[0];
-		float y=mouseY- field.getDrawingPosition()[1];
+		float x=mouseX- environment.field.getDrawingPosition()[0];
+		float y=mouseY- environment.field.getDrawingPosition()[1];
 
 		return new float[]{x,y};
 	}
 	public void mouseClicked() {
 		if(mouseButton==LEFT_ClICK){
 			float[]coords=normalizeMouse();
-			bot=new Robot(coords[0],coords[1], field);
+			bot=new DrawableRobot(coords,environment);
 		}
 		if(mouseButton==RIGHT_ClICK){
 			if(bot!=null){
 				float[]coords=normalizeMouse();
-				bot.setDestination(new int[]{(int)(coords[0]/field.getSquareSize()), (int)(coords[1]/field.getSquareSize())});
+				bot.setDestination(new int[]{(int)(coords[0]/environment.field.getSquareSize()), (int)(coords[1]/environment.field.getSquareSize())});
 			}
 		}
 	}

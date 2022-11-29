@@ -2,6 +2,7 @@ package Model;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Random;
 
 //la graficazione di Field
 public class FieldContainer {
@@ -12,8 +13,10 @@ public class FieldContainer {
      float drawingPositionX;
      float drawingPositionY;
      boolean anchorMiddleLeft;
+     Random rnd;
 
      public FieldContainer(String input,int width, int height) throws FileNotFoundException{
+          rnd=new Random();
           actualField=new Field(input);
           this.setSizes(width, height);
      }
@@ -66,5 +69,19 @@ public class FieldContainer {
      }
      public int[][] cloneMatrix(){
           return actualField.cloneMatrix();
+     }
+     
+     public int[] getValidCoords(final int[]coords){
+          int addX=0,addY=0;
+          if(getValueAtPos(coords[0], coords[1])==Field.WALL){
+               do{
+                    addX=rnd.nextInt(3)-1;
+                    addY=rnd.nextInt(3)-1;
+               }while(coords[0]+addX>getCellsNumber()[0]-1 || coords[0]+addX<0 ||coords[1]+addY>getCellsNumber()[0]-1 || coords[1]+addY<0);
+               coords[0]+=addX;
+               coords[1]+=addY;
+               return getValidCoords(coords);
+          }
+          return coords;
      }
 }
