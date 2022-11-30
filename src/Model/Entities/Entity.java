@@ -14,12 +14,13 @@ public abstract class Entity implements Drawable {
      }
      public void updatePosition(float []position){
           float squareSize=environment.field.getSquareSize();
+          
           int cellX=(int)(position[0]/squareSize);
           int cellY=(int)(position[1]/squareSize);
           int[]coords=new int[]{cellX,cellY};
 
           coords=environment.field.getValidCoords(coords);
-          position=new float[]{(float)(coords[0]*squareSize+squareSize*0.5),(float)(coords[1]*squareSize+squareSize*0.5)};
+          this.position=new float[]{(float)(coords[0]*squareSize+squareSize*0.5),(float)(coords[1]*squareSize+squareSize*0.5)};
      }
      
      public void setNewPosition(float []coords){

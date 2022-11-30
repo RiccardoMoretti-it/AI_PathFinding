@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Optional;
 
 import Entities.Characters.DrawableRobot;
 import Model.*;
@@ -18,7 +19,6 @@ public class Inizia extends PApplet {
 	boolean setup=false;
 	String PATH;
 	Environment environment;
-	Robot bot;
 
 	public void settings(){
 		size(400, 400);
@@ -40,7 +40,7 @@ public class Inizia extends PApplet {
 			e.printStackTrace();
 		}
 		field.randomize();
-		environment=new Environment(field);
+		environment=new Environment(field,this);
 	}
 
 	public void draw(){
@@ -55,7 +55,7 @@ public class Inizia extends PApplet {
 		if(bot!=null){
 			if(frameCount%4==0)
 			bot.advance();
-			drawBot();		
+			bot.draw();		
 			print("\n"+bot.getPosition()[0],bot.getPosition()[1]);
 		}
 	}		
@@ -150,9 +150,10 @@ public class Inizia extends PApplet {
 	public void mouseClicked() {
 		if(mouseButton==LEFT_ClICK){
 			float[]coords=normalizeMouse();
-			bot=new DrawableRobot(coords,environment);
+			environment.add(Optional.of(new DrawableRobot(coords,environment)));
 		}
 		if(mouseButton==RIGHT_ClICK){
+			
 			if(bot!=null){
 				float[]coords=normalizeMouse();
 				bot.setDestination(new int[]{(int)(coords[0]/environment.field.getSquareSize()), (int)(coords[1]/environment.field.getSquareSize())});

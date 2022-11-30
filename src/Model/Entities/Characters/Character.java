@@ -3,8 +3,6 @@ import java.util.Optional;
 
 import Entities.DrawableBomb;
 import Model.Environment;
-import Model.FieldContainer;
-import Model.Entities.Bomb;
 import Model.Entities.Entity;
 
 public abstract class Character extends Entity{

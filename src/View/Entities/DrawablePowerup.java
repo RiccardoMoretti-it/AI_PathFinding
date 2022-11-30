@@ -7,7 +7,6 @@ public class DrawablePowerup extends Powerup {
 
      protected DrawablePowerup(float[] position, Environment environment) {
           super(position, environment);
-          //TODO Auto-generated constructor stub
      }
 
      @Override

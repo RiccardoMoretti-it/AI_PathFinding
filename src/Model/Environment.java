@@ -3,11 +3,15 @@ package Model;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import Model.Entities.Bomb;
 import Model.Entities.Entity;
 import Model.Entities.Powerup;
 import Model.Entities.Characters.Robot;
+import processing.core.PApplet;
+import processing.core.PVector;
+
 
 public class Environment {
      
@@ -17,23 +21,26 @@ public class Environment {
      public static final int DONW = -4;
      Robot[] Player;
 
-     ArrayList<Bomb> bombs = new ArrayList<>();
-     ArrayList<Powerup> powerups = new ArrayList<>();
-     Character[] characters;
+     ArrayList<Entity> entities=new ArrayList<>();
      public final FieldContainer field;
+     public final PApplet canvas;
      Random rnd;
 
-     public Environment(FieldContainer field){
+     public Environment(FieldContainer field, PApplet canvas){
+          this.canvas=canvas;
           this.field=field;
      }
 
-     public void add(Optional<? extends Entity> entitySent){
+     public void add(Optional<Entity> entitySent){
           if (entitySent.isPresent()){
-               Entity entity= (Entity)entitySent.get();
-               
-               if(entity.getClass()== Bomb.class) bombs.add((Bomb)entity);
-               else if(entity.getClass()== Powerup.class) powerups.add((Powerup)entity);
-
+               entities.add(entitySent.get());
           }
+     }
+
+     public void applyRule(Optional.of(Predicate<T> penis)){
+
+     }
+     public void getAllXEntitiesToDoY(){
+          
      }
 }
