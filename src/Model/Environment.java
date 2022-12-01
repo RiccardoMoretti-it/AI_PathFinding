@@ -1,16 +1,13 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import Model.Entities.Bomb;
 import Model.Entities.Entity;
-import Model.Entities.Powerup;
-import Model.Entities.Characters.Robot;
 import processing.core.PApplet;
-import processing.core.PVector;
 
 
 public class Environment {
@@ -19,7 +16,6 @@ public class Environment {
      public static final int RIGHT = -2;
      public static final int UP = -3;
      public static final int DONW = -4;
-     Robot[] Player;
 
      ArrayList<Entity> entities=new ArrayList<>();
      public final FieldContainer field;
@@ -37,10 +33,9 @@ public class Environment {
           }
      }
 
-     public void applyRule(Optional.of(Predicate<T> penis)){
-
-     }
-     public void getAllXEntitiesToDoY(){
-          
+     public List<Optional<Entity>> getEntitiesWithCondition( final Predicate<Entity> pre) {
+          final List<Optional<Entity>> newList = new ArrayList<>();
+          entities.forEach(t -> newList.add(Optional.of(t).filter(pre)));
+          return newList;
      }
 }

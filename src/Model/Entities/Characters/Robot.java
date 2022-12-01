@@ -1,6 +1,7 @@
 package Model.Entities.Characters;
 import java.util.ArrayList;
 import Model.Environment;
+import Model.utilities;
 
 
 public abstract class Robot extends Character{
@@ -22,27 +23,44 @@ public abstract class Robot extends Character{
      private void goToDestination() {
           if(directions.size()>0){
                isMoving=true;
-               advanceCellDestination();
+               currentDirection=directions.get(0);
+
+               ArrayList<Robot> allRobot=utilities.getAllRobots(environment);
+
+               float moveByX=0;
+               float moveByY=0;
                switch(currentDirection){
                     case Environment.LEFT:
-                         position[0]-=environment.field.getSquareSize();
+                         moveByX=-environment.field.getSquareSize();
                     break;
                     case Environment.RIGHT:
-                          position[0]+=environment.field.getSquareSize();
+                         moveByX=environment.field.getSquareSize();
                     break;
                     case Environment.UP:
-                         position[1]-=environment.field.getSquareSize();
+                         moveByY=-environment.field.getSquareSize();
                     break;
                     case Environment.DONW:
-                         position[1]+=environment.field.getSquareSize();
+                         moveByY=environment.field.getSquareSize();
                     break;
-               }         
+               }
+
+               Boolean canMove=true;
+               for(Robot bot : allRobot) {
+                    if(bot != this){
+                         float sqSize=environment.field.getSquareSize();
+                         if((int)((position[0]+moveByX)/sqSize) == (int)(bot.getPosition()[0]/sqSize)
+                         && (int)((position[1]+moveByY)/sqSize) == (int)(bot.getPosition()[1]/sqSize))
+                              canMove=false;        
+                    }
+               }
+
+               if(canMove){
+                    position[0]+=moveByX;
+                    position[1]+=moveByY;
+                    directions.remove(0);
+               }
           }
           else isMoving=false;
-     }
-     private void advanceCellDestination() {
-          currentDirection=directions.get(0);
-          directions.remove(0);
      }
      private void calculateDirections() {
           directions=environment.field.getDirections((int)(position[0]/environment.field.getSquareSize()), (int)(position[1]/environment.field.getSquareSize()), cellDestination[0], cellDestination[1]);

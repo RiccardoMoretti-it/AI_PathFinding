@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import Entities.Characters.DrawableRobot;
 import Model.*;
+import Model.Entities.Entity;
 import Model.Entities.Characters.Robot;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -45,39 +47,26 @@ public class Inizia extends PApplet {
 
 	public void draw(){
 		if(!setup)setup();
+		ArrayList<Robot> allRobots = utilities.getAllRobots(environment);
 		if(wasResized()){
 			updateResolution();
 			environment.field.setSizes(width, height);
-			adjustRobotPosition();
+			allRobots.forEach(bot -> { 
+				(bot).resize(environment.field.getOldSquareSize(),
+						   environment.field.getOldSquareSize());});
 		}
 		drawField(environment.field);
 
-		if(bot!=null){
+		allRobots.forEach(bot->{
 			if(frameCount%4==0)
-			bot.advance();
-			bot.draw();		
-			print("\n"+bot.getPosition()[0],bot.getPosition()[1]);
-		}
+				bot.advance();	
+			bot.draw();
+		});
 	}		
 
-	private void adjustRobotPosition() {
-		float ratio=environment.field.getSquareSize()/environment.field.getOldSquareSize();
-		float[] coords=bot.getPosition();
-		coords[0]*=ratio;
-		coords[1]*=ratio;
-
-		bot.setNewPosition(coords);
-	}
 	private void updateResolution() {
 		currentResolutionX=width;
 		currentResolutionY=height;
-	}
-	private void drawBot() {
-			float startX=environment.field.getDrawingPosition()[0]+bot.getPosition()[0];
-			float startY=environment.field.getDrawingPosition()[1]+bot.getPosition()[1];
-			fill(200,40,40);
-			ellipse((float)startX,(float)startY,(float)environment.field.getSquareSize(),(float)environment.field.getSquareSize());
-	
 	}
 	private boolean wasResized() {
 		if(width!=currentResolutionX || height!=currentResolutionY){
@@ -154,9 +143,12 @@ public class Inizia extends PApplet {
 		}
 		if(mouseButton==RIGHT_ClICK){
 			
-			if(bot!=null){
-				float[]coords=normalizeMouse();
-				bot.setDestination(new int[]{(int)(coords[0]/environment.field.getSquareSize()), (int)(coords[1]/environment.field.getSquareSize())});
+			ArrayList<Robot> allRobots = utilities.getAllRobots(environment);
+			
+			float[]coords=normalizeMouse();
+			for (Robot bot : allRobots) {
+				(bot).setDestination(new int[]{(int)(coords[0]/environment.field.getSquareSize()),
+										 (int)(coords[1]/environment.field.getSquareSize())});
 			}
 		}
 	}

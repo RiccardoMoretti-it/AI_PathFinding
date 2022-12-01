@@ -30,4 +30,10 @@ public abstract class Entity implements Drawable {
           return position;
      }
 
+     public void resize(float oldSquareSize, float squareSize){
+		float ratio=environment.field.getSquareSize()/environment.field.getOldSquareSize();
+		position[0]*=ratio;
+		position[1]*=ratio;
+     }
+
 }
